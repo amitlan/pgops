@@ -3,4 +3,4 @@ make -j2
 make install
 
 export PATH=/home/amit/pg/install/head/bin:$PATH
-export PGDATA=~/postgres/data/head
+export PGDATA=~/pg/data/head
