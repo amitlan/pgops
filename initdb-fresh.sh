@@ -1,4 +1,5 @@
-PGDATA=$HOME/pg/data/head
+PGDIR=$HOME/pg
+PGDATA=$PGDIR/data/head
 rm -r $PGDATA
 initdb -N -D $PGDATA
 echo "logging_collector = on" >> $PGDATA/postgresql.conf
