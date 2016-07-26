@@ -3,20 +3,21 @@ PGDIR=$HOME/pg
 
 usage()
 {
-	echo "USAGE: pg_console op [arg1 [arg2]]"
+	echo "USAGE: pg_console op [ version_num | git_branch_name ]"
 	echo ""
 	echo " where op is:"
 	echo ""
 	echo " help - get this help text"
 	echo " init - init PGDIR for the first time"
-	echo " get  - get source tarball 9.x.x   ($ pg_console 9.x.x get)"
+	echo " get  - get source tarball 9.x.x   ($ pg_console get 9.x.x)"
 	echo " ?    - tell branch in git         ($ pg_console ?)"
-	echo " e    - export PATH for a version  ($ pg_console [ 9.x.x ] e)"
-	echo " i    - install version            ($ pg_console [ 9.x.x ] i)"
-	echo " d    - init database              ($ pg_console [ 9.x.x ] d)"
-	echo " s    - start server               ($ pg_console [ 9.x.x ] s)"
-	echo " x    - stop server                ($ pg_console [ 9.x.x ] x)"
-	echo " r    - restart server             ($ pg_console [ 9.x.x ] r)"
+	echo " e    - export PATH for a version  ($ pg_console e [ 9.x.x | branch ])"
+	echo " i    - install version            ($ pg_console i [ 9.x.x | branch ])"
+	echo " d    - init database              ($ pg_console d [ 9.x.x | branch ])"
+	echo " s    - start server               ($ pg_console s [ 9.x.x | branch ])"
+	echo " x    - stop server                ($ pg_console x [ 9.x.x | branch ])"
+	echo " r    - restart server             ($ pg_console r [ 9.x.x | branch ])"
+	echo ""
 	return;
 }
 export -f usage;
