@@ -38,6 +38,7 @@ init()
 }
 export -f init
 
+# download tarball for given PG version
 get_tarball()
 {
 	ver=$1;
@@ -51,6 +52,13 @@ get_tarball()
 }
 export -f get_tarball
 
+# Check that given version has tarball downloaded
+#
+# If not a 9.x.x version number, must be a git branch name, in which case,
+# check that branch really exists
+#
+# If version is not given, determine the currrently active git branch and
+# "return" the same in 'branch' variable
 set_version()
 {
 	branch=$1
@@ -81,7 +89,7 @@ set_version()
 			git checkout $oldver &> /dev/null
 		fi
 	else
-		# determine the current git branch and use as version
+		# determine the current git branch and return as branch
 		cd $PGDIR/git;
 		gitbr=`git status | grep "On branch" | awk '{print $4}'`;
 		eval "$branch='$gitbr'"
@@ -91,6 +99,50 @@ set_version()
 }
 export -f set_version
 
+# Set path per requested version number of git branch name making sure that
+# we don't update if the requested path is already in PATH.
+set_path()
+{
+	branch=$1
+	ver=$2
+	if [ ! -z "$ver" ]; then
+		PGINSTALL="$PGDIR/install/$ver";
+	else
+		PGINSTALL="$PGDIR/install/$branch";
+	fi
+
+	alreadyinpath="0";
+	currentpgpath=`which postgres`;
+	if [ "$?" == "0" ]; then
+		# `which postgres` did return a postgres path; but is it the one we're
+		# expecting (that is, of given version)?
+		newpgpath="$PGINSTALL/bin/postgres";
+		if [ "$currentpgpath" == "$newpgpath" ]; then
+			alreadyinpath="1";
+		fi;
+
+		if [ "$alreadyinpath" == "0" ]; then
+			PATH=$PGINSTALL/bin:$PATH;
+			LD_LIBRARY_PATH=$PGINSTALL/lib:$PATH;
+		else
+			echo "===================";
+			echo " Not altering PATH ";
+			echo "===================";
+		fi;
+	# We have no postgres whatsoever; so add the current $PGINSTALL/bin to PATH
+	else
+		PATH=$PGINSTALL/bin:$PATH;
+		LD_LIBRARY_PATH=$PGINSTALL/lib:$PATH;
+	fi;
+
+	export PATH
+	export LD_LIBRARY_PATH
+}
+export -f set_path
+
+# Switch to either $PGDIR/tar/$ver directory or $PGDIR/git and swithch to the
+# requested branch (also in $ver); if branch is switched, return the old branch
+# name in 'origver'
 cd_to_source_or_git_branch()
 {
 	origdir=$1
@@ -207,45 +259,6 @@ do_op()
 }
 export -f do_op
 
-set_path()
-{
-	branch=$1
-	ver=$2
-	if [ ! -z "$ver" ]; then
-		PGINSTALL="$PGDIR/install/$ver";
-	else
-		PGINSTALL="$PGDIR/install/$branch";
-	fi
-
-	alreadyinpath="0";
-	currentpgpath=`which postgres`;
-	if [ "$?" == "0" ]; then
-		# `which postgres` did return a postgres path; but is it the one we're
-		# expecting (that is, of given version)?
-		newpgpath="$PGINSTALL/bin/postgres";
-		if [ "$currentpgpath" == "$newpgpath" ]; then
-			alreadyinpath="1";
-		fi;
-
-		if [ "$alreadyinpath" == "0" ]; then
-			PATH=$PGINSTALL/bin:$PATH;
-			LD_LIBRARY_PATH=$PGINSTALL/lib:$PATH;
-		else
-			echo "===================";
-			echo " Not altering PATH ";
-			echo "===================";
-		fi;
-	# We have no postgres whatsoever; so add the current $PGINSTALL/bin to PATH
-	else
-		PATH=$PGINSTALL/bin:$PATH;
-		LD_LIBRARY_PATH=$PGINSTALL/lib:$PATH;
-	fi;
-
-	export PATH
-	export LD_LIBRARY_PATH
-}
-export -f set_path
-
 check_op()
 {
 	if [ -z "$op" -o\
@@ -266,21 +279,32 @@ check_op()
 }
 export -f check_op
 
-if [ "$op" == "init" ]; then init; fi
-
+# Command line options
 op=$1
 ver=$2
-branch=''
 
+# check op, print usage if none provided or invalid
 check_op $op
 
-if [ "$op" == "get" ]; then
+# ops 'init' and 'get' are handled outside do_op
+if [ "$op" == "init" ]; then
+	init
+	return 0
+elif [ "$op" == "get" ]; then
+	# there better be something in ver
+	if [ -z "$ver" ]; then
+		echo "get what?"
+		return 1
+	fi
 	get_tarball $ver
-	return 0;
+	return 0
 fi
 
+# figure out the version or branch to use
+branch=''
 set_version branch $ver
 if [ "$?" == 0 ]; then
+	# successfully determind version; set path accordinyly & do op.
 	set_path $branch $ver
 	do_op $op $branch $ver
 fi
