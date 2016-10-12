@@ -187,7 +187,7 @@ do_install()
 		fi
 		CFLAGS="-O0 -ggdb -fno-omit-frame-pointer -Wunused -Wreturn-type -Wall"\
 		./configure --enable-debug --enable-cassert --enable-tap-tests --prefix=$PGINSTALL &&\
-		gmake -j2 &&\
+		gmake -j3 &&\
 		gmake install;
 	} 2>&1 > /dev/null
 }
@@ -254,7 +254,7 @@ do_op()
 		;;
 
 	"?")
-		echo "Currently on '$ver' in git/";
+		echo $ver;
 	esac;
 }
 export -f do_op
