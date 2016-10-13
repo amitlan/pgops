@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 PGDIR=$HOME/pg
 
 CFLAGS="-g -Wunused -Wreturn-type -Wunused-but-set-variable" \
