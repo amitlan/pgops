@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+if [ -z "$1" ]; then
+	echo "** no op specified **"
+	exit
+else
+	op=$1
+	if [ "$op" != "s" -a \
+		 "$op" != "x" -a \
+		 "$op" != "r" -a \
+		 "$op" != "start" -a \
+		 "$op" != "stop" -a \
+		 "$op" != "restart" ]; then
+		echo "** op unrecognized **"
+		exit
+	fi
+
+	if [ "$op" == "s" ]; then
+		op="start"
+	elif [ "$op" == "x" ]; then
+		op="stop"
+	elif [ "$op" == "r" ]; then
+		op="restart"
+	fi
+fi
+
+pg_ctl -c -D $PGDATA $op
