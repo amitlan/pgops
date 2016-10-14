@@ -1,20 +1,28 @@
 #!/usr/bin/env bash
 PGDIR=$HOME/pg
 
-# --option sanity
-if [ ! -z "$1" -a "$1" != "--regress" -a "$1" != "--clean" ]; then
-	echo "** invalid option **"
+clean="do"
+regress="do"
+# --option sanity if $1 specified
+if [ ! -z "$1" -a "$1" != "--noclean" -a "$1" != "--noregress" ]; then
+	echo "** invalid option (say --noclean or --noregress ) **"
 	return 1
+elif [ "$1" == "--noclean" ]; then
+	clean="dont"
+elif [ "$1" == "--noregress" ]; then
+	regress="dont"
 fi
 
-# make check?
-if [ ! -z "$1" -a "$1" = "--regress" ]; then
-	make check
-	return 0
+# --option sanity if $2 specified
+if [ ! -z "$2" -a "$2" != "--noregress" ]; then
+	echo "** option 2 can only ever be --noregress **"
+	return 1
+elif [ "$2" == "--noregress" ]; then
+	regress="dont"
 fi
 
-# make clean?
-if [ ! -z "$1" -a "$1" = "--clean" ]; then
+# make clean if not asked not to
+if [ "$clean" != "dont" ]; then
 	make clean 2>&1 > /dev/null
 	echo "** all cleaned up **"
 	echo ""
@@ -26,6 +34,11 @@ fi
     make -j3 2>&1 | grep -A2 -B2 "warning:"
     make install
 } 2>&1 | grep -B1 "warning:\|error:"
+
+# done building. run make check if not asked not to.
+if [ "$regress" != "dont" ]; then
+	make check
+fi
 
 # add to PATH only if not already done
 currentpgpath=`which postgres`
