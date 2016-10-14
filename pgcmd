@@ -187,7 +187,7 @@ do_install()
 			gmake distclean;
 		fi
 		CFLAGS="-O0 -ggdb -fno-omit-frame-pointer -Wunused -Wreturn-type -Wall"\
-		./configure --enable-debug --enable-cassert --enable-tap-tests --prefix=$PGINSTALL &&\
+		./configure --enable-debug --enable-cassert --enable-tap-tests --with-zlib --prefix=$PGINSTALL &&\
 		gmake -j3 &&\
 		gmake install;
 	} 2>&1 > /dev/null
