@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 PGDIR=$HOME/pg
 
+# make clean?
 if [ ! -z "$1" -a "$1" = "--clean" ]; then
 	make clean 2>&1 > /dev/null
-	echo "all cleaned up"
+	echo "** all cleaned up **"
 	echo ""
 fi
 
@@ -14,5 +15,12 @@ fi
     make install
 } 2>&1 | grep -B1 "warning:\|error:"
 
-export PATH=$PGDIR/install/head/bin:$PATH
-export PGDATA=$PGDIR/data/head
+# add to PATH only if not already done
+currentpgpath=`which postgres`
+newpgpath=$PGDIR/install/head/bin/postgres
+if [ "$currentpgpath" == "$newpgpath" ]; then
+	PATH=$PATH
+else
+	PATH=$PGDIR/install/head/bin:$PATH
+fi
+export PATH
