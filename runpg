@@ -2,7 +2,7 @@
 
 if [ -z "$1" ]; then
 	echo "** no op specified **"
-	exit
+	return 1
 else
 	op=$1
 	if [ "$op" != "s" -a \
@@ -12,7 +12,7 @@ else
 		 "$op" != "stop" -a \
 		 "$op" != "restart" ]; then
 		echo "** op unrecognized **"
-		exit
+		return 1
 	fi
 
 	if [ "$op" == "s" ]; then
@@ -25,3 +25,4 @@ else
 fi
 
 pg_ctl -c -D $PGDATA $op
+return 0

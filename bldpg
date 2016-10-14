@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
 PGDIR=$HOME/pg
 
+# --option sanity
+if [ ! -z "$1" -a "$1" != "--regress" -a "$1" != "--clean" ]; then
+	echo "** invalid option **"
+	return 1
+fi
+
 # make check?
 if [ ! -z "$1" -a "$1" = "--regress" ]; then
 	make check
-	exit
+	return 0
 fi
 
 # make clean?
@@ -30,3 +36,4 @@ else
 	PATH=$PGDIR/install/head/bin:$PATH
 fi
 export PATH
+return 0
