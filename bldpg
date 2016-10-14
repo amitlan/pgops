@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 PGDIR=$HOME/pg
 
+# make check?
+if [ ! -z "$1" -a "$1" = "--regress" ]; then
+	make check
+	exit
+fi
+
 # make clean?
 if [ ! -z "$1" -a "$1" = "--clean" ]; then
 	make clean 2>&1 > /dev/null
