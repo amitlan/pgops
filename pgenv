@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+PGDIR=$HOME/pg
+
+export PATH=$PGDIR/install/$1/bin:$PATH
+export PGDATA=$PGDATA/data/$1
