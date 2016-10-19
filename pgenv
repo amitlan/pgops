@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
 PGDIR=$HOME/pg
 
-export PATH=$PGDIR/install/$1/bin:$PATH
-export PGDATA=$PGDATA/data/$1
+if [ -z "$1" ]; then
+	echo "** no args **";
+fi
+
+# add to PATH only if not already done
+currentpgpath=`which postgres`
+newpgpath=$PGDIR/install/$1/bin/postgres
+if [ "$currentpgpath" == "$newpgpath" ]; then
+	PATH=$PATH
+else
+	PATH=$PGDIR/install/$1/bin:$PATH
+fi
+export PATH
+export PGDATA=$PGDIR/data/$1
