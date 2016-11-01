@@ -232,7 +232,7 @@ do_op()
 		 echo "wal_level = hot_standby" >> $PGDATA/postgresql.conf;
 		 echo "max_wal_senders = 3" >> $PGDATA/postgresql.conf;
 		 echo "archive_mode = on" >> $PGDATA/postgresql.conf;
-		 echo "archive_command = '/bin/true'" >> $PGDATA/postgresql.conf;
+		 echo "archive_command = 'cp %p $PGARCH/%f'" >> $PGDATA/postgresql.conf;
 		 echo "logging_collector = on" >> $PGDATA/postgresql.conf;
 
 		 echo "local   replication     $USER                                trust" >> $PGDATA/pg_hba.conf;
