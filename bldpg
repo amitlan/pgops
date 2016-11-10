@@ -30,7 +30,7 @@ fi
 
 {
     CFLAGS="-O0 -ggdb -fno-omit-frame-pointer -Wunused -Wreturn-type -Wall" \
-    ./configure --enable-debug --enable-cassert --prefix=$PGDIR/install/head
+    ./configure --enable-debug --enable-cassert --enable-tap-tests --prefix=$PGDIR/install/head
     make -j3 2>&1 | grep -A2 -B2 "warning:"
     make install
 } 2>&1 | grep -B1 "warning:\|error:"
