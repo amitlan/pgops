@@ -226,7 +226,7 @@ do_op()
 		 rm -r $PGDATA;
 		 rm -r $PGARCH;
 		 # pg_ctl init -D $PGDATA -o "--data-checksums";
-		 initdb -N -D $PGDATA;
+		 initdb -D $PGDATA;
 		 mkdir -p $PGARCH
 		 echo "# following settings installed by pg_console " >> $PGDATA/postgresql.conf;
 		 echo "wal_level = hot_standby" >> $PGDATA/postgresql.conf;
