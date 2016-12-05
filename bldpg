@@ -29,7 +29,7 @@ if [ "$clean" != "dont" ]; then
 fi
 
 {
-    CFLAGS="-O0 -ggdb -fno-omit-frame-pointer -Wunused -Wreturn-type -Wall" \
+    CFLAGS="-O0 -ggdb -fno-omit-frame-pointer -Wunused -Wreturn-type -Wall -Wmaybe-uninitialized" \
     ./configure --enable-debug --enable-cassert --enable-tap-tests --prefix=$PGDIR/install/head
     make -j3
     make install
