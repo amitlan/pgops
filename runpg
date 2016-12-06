@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+PGDATA=/home/amit/pg/data/head
 if [ -z "$1" ]; then
 	echo "** no op specified **"
 	return 1

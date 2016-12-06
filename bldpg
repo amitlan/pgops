@@ -3,22 +3,35 @@ PGDIR=$HOME/pg
 
 clean="do"
 regress="do"
+optimize="no"
 # --option sanity if $1 specified
-if [ ! -z "$1" -a "$1" != "--noclean" -a "$1" != "--noregress" ]; then
+if [ ! -z "$1" -a "$1" != "--noclean" -a "$1" != "--noregress" -a "$1" != "--optimize" ]; then
 	echo "** invalid option (say --noclean or --noregress ) **"
 	return 1
 elif [ "$1" == "--noclean" ]; then
 	clean="dont"
 elif [ "$1" == "--noregress" ]; then
 	regress="dont"
+elif [ "$1" == "--optimize" ]; then
+	optimize="yes"
 fi
 
 # --option sanity if $2 specified
-if [ ! -z "$2" -a "$2" != "--noregress" ]; then
-	echo "** option 2 can only ever be --noregress **"
+if [ ! -z "$2" -a "$2" != "--noregress" -a "$2" != "--optimize" ]; then
+	echo "** option 2 can only ever be --noregress or --optimize **"
 	return 1
 elif [ "$2" == "--noregress" ]; then
 	regress="dont"
+elif [ "$2" == "--optimize" ]; then
+	optimize="yes"
+fi
+
+# --option sanity if $3 specified
+if [ ! -z "$3" -a "$3" != "--optimize" ]; then
+	echo "** option 3 can only ever be --optimize **"
+	return 1
+elif [ "$3" == "--optimize" ]; then
+	optimize="yes"
 fi
 
 # make clean if not asked not to
@@ -29,11 +42,18 @@ if [ "$clean" != "dont" ]; then
 fi
 
 {
-    CFLAGS="-O0 -ggdb -fno-omit-frame-pointer -Wunused -Wreturn-type -Wall -Wmaybe-uninitialized" \
+	gccpath=`which gcc`
+	if [ "$optimize" = "yes" ]; then
+		opt="1";
+	else
+		opt="0";
+	fi
+	echo "Building with: $gccpath [-O$opt]"
+    CFLAGS="-O$opt -g3 -fno-omit-frame-pointer -Wunused -Wreturn-type -Wall -Wmaybe-uninitialized" \
     ./configure --enable-debug --enable-cassert --enable-tap-tests --prefix=$PGDIR/install/head
     make -j3
     make install
-} 2>&1 | grep -B1 "warning:\|error:"
+} 2>&1 | grep -B1 "Building with\|warning:\|error:"
 
 # done building. run make check if not asked not to.
 if [ "$regress" != "dont" ]; then
