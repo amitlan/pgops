@@ -15,3 +15,4 @@ else
 fi
 export PATH
 export PGDATA=$PGDIR/data/$1
+export LD_LIBRARY_PATH=$PGDIR/install/$1/lib/:$LD_LIBRARY_PATH

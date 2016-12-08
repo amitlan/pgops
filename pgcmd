@@ -80,7 +80,7 @@ set_version()
 		else
 			# $ver is really a git branch name; check if valid name
 			cd $PGDIR/git;
-			oldver=`git status | grep "On branch" | awk '{print $4}'`;
+			oldver=`git status | grep "On branch" | awk '{print $3}'`;
 			git checkout $ver &> /dev/null
 			if [ "$?" != 0 ]; then
 				echo "Named branch does not exist";
@@ -92,7 +92,7 @@ set_version()
 	else
 		# determine the current git branch and return as branch
 		cd $PGDIR/git;
-		gitbr=`git status | grep "On branch" | awk '{print $4}'`;
+		gitbr=`git status | grep "On branch" | awk '{print $3}'`;
 		eval "$branch='$gitbr'"
 	fi
 
@@ -159,7 +159,7 @@ cd_to_source_or_git_branch()
 
 	# switch to the requested git branch, remembering the current one
 	cd $PGDIR/git
-	oldver=`git status | grep "On branch" | awk '{print $4}'`;
+	oldver=`git status | grep "On branch" | awk '{print $3}'`;
 	git checkout "$ver" &> /dev/null
 	GITSNAPPATH=$PGDIR/gitsnap/$ver;
 	git archive --format=tar HEAD | gzip > $GITSNAPPATH.tar.gz;
