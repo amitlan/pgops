@@ -6,7 +6,7 @@ regress="do"
 optimize="no"
 # --option sanity if $1 specified
 if [ ! -z "$1" -a "$1" != "--noclean" -a "$1" != "--noregress" -a "$1" != "--optimize" ]; then
-	echo "** invalid option (say --noclean or --noregress ) **"
+	echo "** invalid option (allowed values are: --noclean or --noregress or --optimize) **"
 	return 1
 elif [ "$1" == "--noclean" ]; then
 	clean="dont"
