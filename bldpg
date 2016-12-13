@@ -36,7 +36,7 @@ fi
 
 # make clean if not asked not to
 if [ "$clean" != "dont" ]; then
-	make clean 2>&1 > /dev/null
+	gmake clean 2>&1 > /dev/null
 	echo "** all cleaned up **"
 	echo ""
 fi
@@ -51,13 +51,13 @@ fi
 	echo "Building with: $gccpath [-O$opt]"
     CFLAGS="-O$opt -g3 -fno-omit-frame-pointer -Wunused -Wreturn-type -Wall -Wmaybe-uninitialized" \
     ./configure --enable-debug --enable-cassert --enable-tap-tests --prefix=$PGDIR/install/head
-    make -j3
-    make install
+    gmake -j3
+    gmake install
 } 2>&1 | grep -B1 "Building with\|warning:\|error:"
 
 # done building. run make check if not asked not to.
 if [ "$regress" != "dont" ]; then
-	make check
+	gmake check
 fi
 
 # add to PATH only if not already done

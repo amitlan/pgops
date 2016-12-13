@@ -124,7 +124,7 @@ set_path()
 
 		if [ "$alreadyinpath" == "0" ]; then
 			PATH=$PGINSTALL/bin:$PATH;
-			LD_LIBRARY_PATH=$PGINSTALL/lib:$PATH;
+			LD_LIBRARY_PATH=$PGINSTALL/lib:$LD_LIBRARY_PATH;
 		else
 			echo "===================";
 			echo " Not altering PATH ";
@@ -133,7 +133,7 @@ set_path()
 	# We have no postgres whatsoever; so add the current $PGINSTALL/bin to PATH
 	else
 		PATH=$PGINSTALL/bin:$PATH;
-		LD_LIBRARY_PATH=$PGINSTALL/lib:$PATH;
+		LD_LIBRARY_PATH=$PGINSTALL/lib:$LD_LIBRARY_PATH;
 	fi;
 
 	export PATH
