@@ -4,8 +4,9 @@ PGDIR=$HOME/pg
 PGDATA=$PGDIR/data/head
 rm -r $PGDATA
 initdb -N -D $PGDATA
-echo "logging_collector = on" >> $PGDATA/postgresql.conf
 echo "shared_buffers = 256MB" >> $PGDATA/postgresql.conf
+echo "wal_level = logical" >> $PGDATA/postgresql.conf
+echo "logging_collector = on" >> $PGDATA/postgresql.conf
 echo "autovacuum = off" >> $PGDATA/postgresql.conf
 
 if [ ! -z "$1" ]; then
