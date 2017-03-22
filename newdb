@@ -8,6 +8,7 @@ echo "shared_buffers = 256MB" >> $PGDATA/postgresql.conf
 echo "wal_level = logical" >> $PGDATA/postgresql.conf
 echo "logging_collector = on" >> $PGDATA/postgresql.conf
 echo "autovacuum = off" >> $PGDATA/postgresql.conf
+echo "local   replication   $USER   trust" >> $PGDATA/pg_hba.conf;
 
 if [ ! -z "$1" ]; then
 	if [ "$1" != "--start" ]; then
