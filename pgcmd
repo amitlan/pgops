@@ -226,7 +226,7 @@ do_op()
 		 rm -r $PGDATA;
 		 rm -r $PGARCH;
 		 # pg_ctl init -D $PGDATA -o "--data-checksums";
-		 initdb -D $PGDATA;
+		 initdb --no-sync -D $PGDATA;
 		 mkdir -p $PGARCH
 		 echo "# following settings installed by pg_console " >> $PGDATA/postgresql.conf;
 		 echo "wal_level = logical" >> $PGDATA/postgresql.conf;
