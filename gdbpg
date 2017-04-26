@@ -4,6 +4,10 @@
 
 PGINSTROOT=$HOME/pg/install/$1
 cd $HOME
+CMD=$2
+if [ ! -z $CMD ]; then
+	BATCH="-batch"
+fi
 
 # tee /dev/tty is for user to see the set of procs considered
 #if [ $# -eq 0 ]
@@ -26,7 +30,7 @@ echo $PROCS
 
 if [ `echo "$PROCS" | wc -w` -eq 1 ]
 then
-    exec gdb $PGINSTROOT/bin/postgres -silent "$PROCS"
+    exec gdb $PGINSTROOT/bin/postgres -silent "$PROCS" $CMD $BATCH
 else
-    exec gdb $PGINSTROOT/bin/postgres -silent
+    exec gdb $PGINSTROOT/bin/postgres -silent $CMD $BATCH
 fi
