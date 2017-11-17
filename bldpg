@@ -4,34 +4,66 @@ PGDIR=$HOME/pg
 clean="do"
 regress="do"
 optimize="no"
+cassert="yes"
+debug="yes"
 # --option sanity if $1 specified
-if [ ! -z "$1" -a "$1" != "--noclean" -a "$1" != "--noregress" -a "$1" != "--optimize" ]; then
-	echo "** invalid option (allowed values are: --noclean or --noregress or --optimize) **"
+if [ ! -z "$1" -a "$1" != "--no-clean" -a "$1" != "--no-regress" -a "$1" != "--optimize" -a "$1" != "--no-cassert" -a "$1" != "--no-debug" ]; then
+	echo "** invalid option (allowed values are: --no-clean or --no-regress or --optimize or --no-cassert or --no-debug) ** on line $LINENO"
 	return 1
-elif [ "$1" == "--noclean" ]; then
+elif [ "$1" == "--no-clean" ]; then
 	clean="dont"
-elif [ "$1" == "--noregress" ]; then
+elif [ "$1" == "--no-regress" ]; then
 	regress="dont"
 elif [ "$1" == "--optimize" ]; then
 	optimize="yes"
+elif [ "$1" == "--no-cassert" ]; then
+	cassert="no"
+elif [ "$1" == "--no-debug" ]; then
+	debug="no"
 fi
 
 # --option sanity if $2 specified
-if [ ! -z "$2" -a "$2" != "--noregress" -a "$2" != "--optimize" ]; then
-	echo "** option 2 can only ever be --noregress or --optimize **"
+if [ ! -z "$2" -a "$2" != "--no-regress" -a "$2" != "--optimize" -a "$2" != "--no-cassert" -a "$2" != "--no-debug" ]; then
+	echo "** option 2 can only ever be --no-regress or --optimize or --no-cassert or --no-debug ** on line $LINENO"
 	return 1
-elif [ "$2" == "--noregress" ]; then
+elif [ "$2" == "--no-regress" ]; then
 	regress="dont"
 elif [ "$2" == "--optimize" ]; then
 	optimize="yes"
+elif [ "$2" == "--no-cassert" ]; then
+	cassert="no"
+elif [ "$2" == "--no-debug" ]; then
+	debug="no"
 fi
 
 # --option sanity if $3 specified
-if [ ! -z "$3" -a "$3" != "--optimize" ]; then
-	echo "** option 3 can only ever be --optimize **"
+if [ ! -z "$3" -a "$3" != "--optimize" -a "$3" != "--no-cassert" -a "$3" != "--no-debug" ]; then
+	echo "** option 3 can only ever be --optimize or --no-cassert or --no-debug ** on line $LINENO"
 	return 1
 elif [ "$3" == "--optimize" ]; then
 	optimize="yes"
+elif [ "$3" == "--no-cassert" ]; then
+	cassert="no"
+elif [ "$3" == "--no-debug" ]; then
+	debug="no"
+fi
+
+# --option sanity if $4 specified
+if [ ! -z "$4" -a "$4" != "--no-cassert" -a "$4" != "--no-debug" ]; then
+	echo "** option 4 can only ever be --no-cassert or --no-debug ** on line $LINENO"
+	return 1
+elif [ "$4" == "--no-cassert" ]; then
+	cassert="no"
+elif [ "$4" == "--no-debug" ]; then
+	debug="no"
+fi
+
+# --option sanity if $5 specified
+if [ ! -z "$5" -a "$5" != "--no-debug" ]; then
+	echo "** option 4 can only ever be --no-debug ** on line $LINENO"
+	return 1
+elif [ "$5" == "--no-debug" ]; then
+	debug="no"
 fi
 
 # make clean if not asked not to
@@ -48,9 +80,23 @@ fi
 	else
 		opt="0";
 	fi
-	echo "Building with: $gccpath [-O$opt]"
+	if [ "$cassert" = "yes" ]; then
+		enable_assert="--enable-cassert"
+		asserts_status="enabled"
+	else
+		enable_assert=""
+		asserts_status="disabled"
+	fi
+	if [ "$debug" = "yes" ]; then
+		enable_debug="--enable-debug"
+		debug_status="enabled"
+	else
+		enable_debug=""
+		debug_status="disabled"
+	fi
+	echo "Building with: $gccpath [-O$opt] [asserts $asserts_status] [debug $debug_status]"
     CFLAGS="-O$opt -g3 -fno-omit-frame-pointer -Wunused -Wreturn-type -Wall -Wmaybe-uninitialized" \
-    ./configure --enable-debug --enable-cassert --enable-tap-tests --prefix=$PGDIR/install/head
+    ./configure $enable_debug $enable_assert --enable-tap-tests --prefix=$PGDIR/install/head
     gmake -j3
     gmake install
 } 2>&1 | grep -B1 "Building with\|warning:\|error:"
