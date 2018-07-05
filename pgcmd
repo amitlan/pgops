@@ -4,20 +4,20 @@ PGDIR=$HOME/pg
 
 usage()
 {
-	echo "USAGE: pg_console op [ version_num | git_branch_name ]"
+	echo "USAGE: pgcmd op [ version_num | git_branch_name ]"
 	echo ""
 	echo " where op is:"
 	echo ""
 	echo " help - get this help text"
 	echo " init - init PGDIR for the first time"
-	echo " get  - get source tarball 9.x.x   ($ pg_console get 9.x.x)"
-	echo " ?    - tell branch in git         ($ pg_console ?)"
-	echo " e    - export PATH for a version  ($ pg_console e [ 9.x.x | branch ])"
-	echo " i    - install version            ($ pg_console i [ 9.x.x | branch ])"
-	echo " d    - init database              ($ pg_console d [ 9.x.x | branch ])"
-	echo " s    - start server               ($ pg_console s [ 9.x.x | branch ])"
-	echo " x    - stop server                ($ pg_console x [ 9.x.x | branch ])"
-	echo " r    - restart server             ($ pg_console r [ 9.x.x | branch ])"
+	echo " get  - get source tarball 9.x.x   ($ pgcmd get 9.x.x)"
+	echo " ?    - tell branch in git         ($ pgcmd ?)"
+	echo " e    - export PATH for a version  ($ pgcmd e [ 9.x.x | branch ])"
+	echo " i    - install version            ($ pgcmd i [ 9.x.x | branch ])"
+	echo " d    - init database              ($ pgcmd d [ 9.x.x | branch ])"
+	echo " s    - start server               ($ pgcmd s [ 9.x.x | branch ])"
+	echo " x    - stop server                ($ pgcmd x [ 9.x.x | branch ])"
+	echo " r    - restart server             ($ pgcmd r [ 9.x.x | branch ])"
 	echo ""
 	return;
 }
@@ -72,7 +72,7 @@ set_version()
 			cd $PGDIR/tar/postgresql-$ver &> /dev/null
 			if [ "$?" != 0 ]; then
 		 		echo "===================================================";
-				echo " Please run 'pg_console get $ver' before proceeding";
+				echo " Please run 'pgcmd get $ver' before proceeding";
 		 		echo "===================================================";
 				echo "";
 				return 1;
@@ -226,13 +226,14 @@ do_op()
 		 rm -r $PGDATA;
 		 rm -r $PGARCH;
 		 # pg_ctl init -D $PGDATA -o "--data-checksums";
-		 initdb --no-sync -D $PGDATA;
+		 initdb --wal-segsize=32 -N -D $PGDATA;
 		 mkdir -p $PGARCH
-		 echo "# following settings installed by pg_console " >> $PGDATA/postgresql.conf;
+		 echo "# following settings installed by pgcmd " >> $PGDATA/postgresql.conf;
 		 echo "wal_level = logical" >> $PGDATA/postgresql.conf;
 		 echo "archive_mode = on" >> $PGDATA/postgresql.conf;
 		 echo "archive_command = 'cp %p $PGARCH/%f'" >> $PGDATA/postgresql.conf;
 		 echo "logging_collector = on" >> $PGDATA/postgresql.conf;
+		 echo "fsync = off" >> $PGDATA/postgresql.conf
 
 		 echo "local   replication     $USER                                trust" >> $PGDATA/pg_hba.conf;
 		 pg_ctl start -D $PGDATA;

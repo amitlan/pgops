@@ -3,12 +3,13 @@
 PGDIR=$HOME/pg
 PGDATA=$PGDIR/data/head
 rm -r $PGDATA
-initdb -N -D $PGDATA
+initdb --wal-segsize=32 -N -D $PGDATA
 echo "shared_buffers = 256MB" >> $PGDATA/postgresql.conf
 echo "wal_level = logical" >> $PGDATA/postgresql.conf
 echo "logging_collector = on" >> $PGDATA/postgresql.conf
 echo "autovacuum = off" >> $PGDATA/postgresql.conf
 echo "max_locks_per_transaction = 512" >> $PGDATA/postgresql.conf
+echo "fsync = off" >> $PGDATA/postgresql.conf
 echo "local   replication   $USER   trust" >> $PGDATA/pg_hba.conf;
 
 if [ ! -z "$1" ]; then

@@ -95,7 +95,7 @@ fi
 		debug_status="disabled"
 	fi
 	echo "Building with: $gccpath [-O$opt] [asserts $asserts_status] [debug $debug_status]"
-    CFLAGS="-O$opt -g3 -fno-omit-frame-pointer -Wunused -Wreturn-type -Wall -Wmaybe-uninitialized" \
+    CFLAGS="-O$opt -g3 -fno-omit-frame-pointer -Wunused -Wreturn-type -Wall -Wmaybe-uninitialized -Wswitch -DCATCACHE_FORCE_RELEASE" \
     ./configure $enable_debug $enable_assert --enable-tap-tests --prefix=$PGDIR/install/head
     gmake -j3
     gmake install
