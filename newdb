@@ -3,7 +3,7 @@
 PGDIR=$HOME/pg
 PGDATA=$PGDIR/data/head
 rm -r $PGDATA
-initdb --wal-segsize=32 -N -D $PGDATA
+initdb -N -D $PGDATA
 echo "shared_buffers = 256MB" >> $PGDATA/postgresql.conf
 echo "wal_level = logical" >> $PGDATA/postgresql.conf
 echo "logging_collector = on" >> $PGDATA/postgresql.conf
