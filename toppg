@@ -9,21 +9,11 @@ if [ ! -z $CMD ]; then
 	BATCH="-batch"
 fi
 
-# tee /dev/tty is for user to see the set of procs considered
-#if [ $# -eq 0 ]
-#then
-    PROCS=`ps auxww | \
-        grep postgres: | \
-        grep -v -e 'grep postgres:' -e 'postgres: stats' -e 'postgres: writer' -e 'postgres: background writer' -e 'postgres: wal writer' -e 'postgres: walwriter' -e 'postgres: checkpointer' -e 'postgres: archiver' -e 'postgres: logger' -e 'postgres: autovacuum' -e 'postgres: bgworker' -e 'postgres: startup process' -e 'postgres: wal receiver process' -e 'postgres: wal sender process' -e 'postgres: logical replication launcher'| \
-        tee /dev/tty | \
-        awk '{print $2}'`
-# else
-#    PROCS=`ps auxww | \
-#        grep postgres: | \
-#        grep -v -e 'grep postgres:' -e 'postgres: stats' -e 'postgres: writer' -e 'postgres: wal writer' -e 'postgres: checkpointer' -e 'postgres: archiver' -e 'postgres: logger' -e 'postgres: autovacuum' | \
-#        grep $@ | \
-#        tee /dev/tty | \
-#        awk '{print $2}'`
-#fi
+PROCS=`ps auxww | \
+       grep postgres: | \
+       grep -v -e 'grep postgres:' -e 'postgres: stats' -e 'postgres: writer' -e 'postgres: background writer' -e 'postgres: wal writer' -e 'postgres: walwriter' -e 'postgres: checkpointer' -e 'postgres: archiver' -e 'postgres: logger' -e 'postgres: autovacuum' -e 'postgres: bgworker' -e 'postgres: startup process' -e 'postgres: wal receiver process' -e 'postgres: wal sender process' -e 'postgres: logical replication launcher'| \
+       awk '{print $2}'`
 
-top -p $PROCS
+if [ "$PROCS" != "" ]; then
+	top -p $PROCS
+fi
